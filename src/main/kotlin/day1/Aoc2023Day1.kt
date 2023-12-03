@@ -5,7 +5,7 @@ import readInput
 object Aoc2023Day1 {
 
     fun solveFirstStar(): Int {
-        val input = readInput("/day1/input-first-day.txt")
+        val input = readInput("/day1/input-day-1.txt")
         var result = 0
 
         for (line in input) {
@@ -17,7 +17,7 @@ object Aoc2023Day1 {
     }
 
     fun solveSecondStar(): Int {
-        val input = readInput("/day1/input-first-day.txt")
+        val input = readInput("/day1/input-day-1.txt")
         var result = 0
 
         for (line in input) {
