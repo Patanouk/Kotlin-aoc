@@ -13,18 +13,32 @@ object Aoc2023Day2 {
     fun solveFirstStar(): Int {
         val input = readInput("/day2/input-day-2.txt")
 
-        return input
-            .map { it.substringAfter(":") }
-            .map { it.split(";") }
-            .map { it.flatMap { it.split(",") } }
-            .map { it.map { it.trim().split(" ") } }
-            .map { it.map { Draw(it[0].toInt(), Color.valueOf(it[1])) } }
+        return mapInputToListOfDraw(input)
             .mapIndexed { i, draws -> (i + 1) to draws }
             .filter { (_, draws) ->
                 draws.all {
                     MAX_PER_COLOR[it.color]!! >= it.number
                 }
             }.sumOf { (i, _) -> i }
+    }
+
+    fun solveSecondStar(): Int {
+        val input = readInput("/day2/input-day-2.txt")
+
+        return mapInputToListOfDraw(input)
+            .map { draws -> draws.groupBy(Draw::color, Draw::number) }
+            .map { it.mapValues { entry -> entry.value.max() } }
+            .map { it.values }
+            .map { it.reduce { acc, i -> acc * i } }
+            .sum()
+    }
+
+    private fun mapInputToListOfDraw(input: List<String>): List<List<Draw>> {
+        return input.map { it.substringAfter(":") }
+            .map { it.split(";") }
+            .map { it.flatMap { it.split(",") } }
+            .map { it.map { it.trim().split(" ") } }
+            .map { it.map { Draw(it[0].toInt(), Color.valueOf(it[1])) } }
     }
 
     private data class Draw(
