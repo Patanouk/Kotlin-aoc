@@ -14,13 +14,13 @@ object Aoc2023Day6 {
             .substringAfter("Time: ")
             .trim()
             .split("\\s+".toRegex())
-            .map { it.toInt() }
+            .map { it.toLong() }
 
         val maxDistance = input.last()
             .substringAfter("Distance: ")
             .trim()
             .split("\\s+".toRegex())
-            .map { it.toInt() }
+            .map { it.toLong() }
 
         return times.zip(maxDistance)
             .map { Race(it.first, it.second) }
@@ -28,9 +28,25 @@ object Aoc2023Day6 {
             .reduce {acc, int -> acc * int}
     }
 
+    fun solveSecondStar(): Int {
+        val input = readInput("/day6/input.txt")
+
+        val time = input.first()
+            .substringAfter("Time: ")
+            .replace(" ", "")
+            .toLong()
+
+        val distance = input.last()
+            .substringAfter("Distance: ")
+            .replace(" ", "")
+            .toLong()
+
+        return Race(time, distance).numberWinningWays()
+    }
+
     private data class Race(
-        val time: Int,
-        val maxDistance: Int,
+        val time: Long,
+        val maxDistance: Long,
     ) {
         fun numberWinningWays(): Int {
             val discriminant = time * time - 4 * maxDistance
@@ -39,7 +55,7 @@ object Aoc2023Day6 {
                 return 0
             }
 
-            if (discriminant == 0 && time % 2 == 0) {
+            if (discriminant == 0L && time % 2 == 0L) {
                 return 1
             }
 
@@ -52,14 +68,4 @@ object Aoc2023Day6 {
             return result
         }
     }
-
-//    i(time - i) > maxDistance
-//    i * time - i^2 > maxDistance
-//
-//    -i^2 + i * time - maxDistance > 0
-//
-//    -i^2 + i * time - maxDistance = 0
-//
-//    time ^ 2 - 4 * (-1) * (- maxDistance)
-//    time ^ 2 - 4maxDistance
 }
