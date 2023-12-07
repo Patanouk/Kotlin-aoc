@@ -18,15 +18,52 @@ object Aoc2023Day7 {
     }
 
     fun solveSecondStar(): Int {
-        val hands = readInput("/day7/input.txt")
+        val temp = readInput("/day7/input.txt")
             .map { it.split(" ") }
             .map { Hand(it[0], it[1].toInt(), cardOrderFirstStar) }
+            .sortedWith(compareBy<Hand> { mapToBestHand(it).handType }.thenComparator { h1, h2 ->
+                handCardComparator(
+                    cardOrderSecondStar
+                ).compare(h1.hand.toCharArray(), h2.hand.toCharArray())
+            })
+            .reversed()
 
-        return 0
+        return readInput("/day7/input.txt")
+            .map { it.split(" ") }
+            .map { Hand(it[0], it[1].toInt(), cardOrderFirstStar) }
+            .sortedWith(compareBy<Hand> { mapToBestHand(it).handType }.thenComparator { h1, h2 ->
+                handCardComparator(
+                    cardOrderSecondStar
+                ).compare(h1.hand.toCharArray(), h2.hand.toCharArray())
+            })
+            .reversed()
+            .mapIndexed { index, hand -> (index + 1) * hand.bid }
+            .sum()
+    }
+
+    private fun mapToBestHand(hand: Hand): Hand {
+        if (hand.hand == "JJJJJ") {
+            return Hand("AAAAA", hand.bid, cardOrderSecondStar)
+        }
+
+        val bestCharToReplace = hand.hand.toCharArray().toList()
+            .filter { it != 'J' }
+            .groupingBy { it }
+            .eachCount()
+            .entries
+            .sortedWith(compareBy<Map.Entry<Char, Int>> { it.value }.reversed().thenComparator { e1, e2 ->
+                handCardComparator(
+                    cardOrderSecondStar
+                ).compare(e1.key.toString().toCharArray(), e2.key.toString().toCharArray())
+            })
+            .first()
+            .key
+
+        return Hand(hand.hand.replace('J', bestCharToReplace), hand.bid, cardOrderSecondStar)
     }
 
     private class Hand(
-        private val hand: String,
+        val hand: String,
         val bid: Int,
         private val cardOrder: List<Char>
     ) : Comparable<Hand> {
@@ -40,6 +77,8 @@ object Aoc2023Day7 {
             return handCardComparator(this.cardOrder)
                 .compare(hand.toCharArray(), other.hand.toCharArray())
         }
+
+        override fun toString() = hand
     }
 
     private fun getHandType(hand: String): HandType {
