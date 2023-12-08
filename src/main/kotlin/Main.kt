@@ -1,5 +1,5 @@
 import day7.Aoc2023Day7
 
 fun main() {
-    println(Aoc2023Day7.solveSecondStar())
+    println(day8.Aoc2023Day8.solveFirstStar())
 }
