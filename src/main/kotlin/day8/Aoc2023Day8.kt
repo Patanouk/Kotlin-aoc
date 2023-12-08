@@ -17,34 +17,77 @@ object Aoc2023Day8 {
         var numberOfSteps = 0
 
         while (currentNode != "ZZZ") {
-            currentNode = getNextNode(currentNode, nodes, directions, numberOfSteps)
+            currentNode = getNextNode(currentNode, nodes, directions[numberOfSteps % directions.length])
             numberOfSteps++
         }
 
         return numberOfSteps
     }
 
-    fun solveSecondStar(): Int {
+    fun solveSecondStar(): Long {
         val input = readInput("/day8/input.txt")
         val directions = input.first()
 
         val nodes = input.subList(2, input.size)
             .map { it.split(" = ") }.associate { Pair(it[0], Node.build(it[1])) }
 
-        var currentNodes = nodes.keys.filter { it.endsWith('A') }
-        var numberOfSteps = 0
+        val startingNodes = nodes.keys.filter { it.endsWith('A') }
+        val minStepsToZNodesPerNode = mutableMapOf<String, Set<Int>>()
 
-        while (!currentNodes.all { it.endsWith('Z') }) {
-            currentNodes = currentNodes.map { getNextNode(it, nodes, directions, numberOfSteps) }
-            numberOfSteps++
-            println(numberOfSteps)
+        for (startingNode in startingNodes) {
+            val visitedNodes = mutableSetOf<Pair<String, Int>>()
+            val minStepsToZNodes = mutableSetOf<Int>()
+
+            var numberOfSteps = 0
+            var nextDirection = directions[0]
+            var nextNode = getNextNode(startingNode, nodes, nextDirection)
+            while (!visitedNodes.contains(Pair(nextNode, numberOfSteps % directions.length))) {
+                visitedNodes.add(Pair(nextNode, numberOfSteps % directions.length))
+
+                if (nextNode.endsWith("Z")) {
+                    minStepsToZNodes.add(numberOfSteps + 1)
+                }
+
+                numberOfSteps++
+                nextDirection = directions[numberOfSteps % directions.length]
+                nextNode = getNextNode(nextNode, nodes, nextDirection)
+            }
+
+            minStepsToZNodesPerNode[startingNode] = minStepsToZNodes
         }
 
-        return numberOfSteps
+        if (minStepsToZNodesPerNode.values.all { it.size == 1 }) {
+         return minStepsToZNodesPerNode.values
+             .map { it.first().toLong() }
+             .let { findLCMOfListOfNumbers(it) }
+        }
+
+        throw RuntimeException("Not solved for the general case")
     }
 
-    private fun getNextNode(currentNode: String, nodes: Map<String, Node>, directions: String, numberOfSteps: Int) =
-        when (val direction = directions[numberOfSteps % directions.length]) {
+    private fun findLCMOfListOfNumbers(numbers: List<Long>): Long {
+        var result = numbers[0]
+        for (i in 1..<numbers.size) {
+            result = findLCM(result, numbers[i])
+        }
+        return result
+    }
+
+    private fun findLCM(a: Long, b: Long): Long {
+        val larger = if (a > b) a else b
+        val maxLcm = a * b
+        var lcm = larger
+        while (lcm <= maxLcm) {
+            if (lcm % a == 0L && lcm % b == 0L) {
+                return lcm
+            }
+            lcm += larger
+        }
+        return maxLcm
+    }
+
+    private fun getNextNode(currentNode: String, nodes: Map<String, Node>, direction: Char) =
+        when (direction) {
             'L' -> nodes[currentNode]!!.left
             'R' -> nodes[currentNode]!!.right
             else -> throw IllegalArgumentException("Does not support direction $direction")
