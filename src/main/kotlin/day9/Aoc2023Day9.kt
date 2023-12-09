@@ -11,6 +11,12 @@ object Aoc2023Day9 {
             .sumOf { getNextSequenceValue(it) }
     }
 
+    fun solveSecondStar(): Int {
+        return readInput("/day9/input.txt")
+            .map { it.split(' ').map { it.toInt() }.reversed() }
+            .sumOf { getNextSequenceValue(it) }
+    }
+
     private fun getNextSequenceValue(sequence: List<Int>): Int {
         if (sequence.all { it == 0 }) {
             return 0
