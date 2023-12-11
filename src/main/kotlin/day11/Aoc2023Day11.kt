@@ -1,6 +1,7 @@
 package day11
 
 import readInput
+import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -8,7 +9,15 @@ import kotlin.math.min
 object Aoc2023Day11 {
 
 
-    fun solveFirstStar(): Int {
+    fun solveFirstStar(): BigDecimal {
+        return countShortestDistance(2)
+    }
+
+    fun solveSecondStar(): BigDecimal {
+        return countShortestDistance(1000000)
+    }
+
+    private fun countShortestDistance(lineFactorMultiply: Int): BigDecimal {
         val input = readInput("/day11/input.txt")
             .map { it.toList() }
 
@@ -28,11 +37,11 @@ object Aoc2023Day11 {
 
         return galaxies.mapIndexed { index, galaxy ->
             galaxies.subList(index, galaxies.size).sumOf { otherGalaxy ->
-                getDistanceBetweenGalaxies(galaxy, otherGalaxy) +
-                        countEmptyLinesBetweenGalaxies(galaxy, otherGalaxy, emptyLines) +
-                        countEmptyColumnsBetweenGalaxies(galaxy, otherGalaxy, emptyColumns)
+                getDistanceBetweenGalaxies(galaxy, otherGalaxy).toBigDecimal() +
+                        countEmptyLinesBetweenGalaxies(galaxy, otherGalaxy, emptyLines).toBigDecimal().multiply((lineFactorMultiply - 1).toBigDecimal()) +
+                        countEmptyColumnsBetweenGalaxies(galaxy, otherGalaxy, emptyColumns).toBigDecimal().multiply((lineFactorMultiply - 1).toBigDecimal())
             }
-        }.sum()
+        }.reduce{acc, bigDecimal -> acc.add(bigDecimal) }
     }
 
     private fun countEmptyLinesBetweenGalaxies(g1: Pair<Int, Int>, g2: Pair<Int, Int>, emptyLines: List<Int>) =
