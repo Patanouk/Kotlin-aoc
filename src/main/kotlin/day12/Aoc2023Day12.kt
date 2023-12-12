@@ -1,18 +1,19 @@
 package day12
 
 import readInput
+import java.math.BigDecimal
 
 object Aoc2023Day12 {
 
 
-    fun solveFirstStar(): Int {
+    fun solveFirstStar(): BigDecimal {
         return readInput("/day12/input.txt")
             .map { it.split(' ') }
             .map { Pair(it[0], it[1].split(',').map { it.toInt() }) }
             .sumOf { getNumberPossibleArrangements(it.first, it.second, mutableMapOf()) }
     }
 
-    fun solveSecondStar(): Int {
+    fun solveSecondStar(): BigDecimal {
         return readInput("/day12/input.txt")
             .map { it.split(' ') }
             .map { listOf((it[0] + '?').repeat(5).dropLast(1), (it[1] + ',').repeat(5).dropLast(1)) }
@@ -20,18 +21,16 @@ object Aoc2023Day12 {
             .sumOf { getNumberPossibleArrangements(it.first, it.second, mutableMapOf()) }
     }
 
-    private fun getNumberPossibleArrangements(springs: String, damagedGroups: List<Int>, memoizationMap: MutableMap<Pair<String, List<Int>>, Int>): Int {
-//        println("$springs || $damagedGroups")
-
+    private fun getNumberPossibleArrangements(springs: String, damagedGroups: List<Int>, memoizationMap: MutableMap<Pair<String, List<Int>>, BigDecimal>): BigDecimal {
         if (memoizationMap.contains(Pair(springs, damagedGroups))) {
             return memoizationMap[Pair(springs, damagedGroups)]!!
         }
 
         if (springs.all { it != '?' }) {
             return if (countConsecutiveDamagedSprings(springs) == damagedGroups) {
-                1
+                BigDecimal.ONE
             } else {
-                0
+                BigDecimal.ZERO
             }
         }
 
@@ -42,7 +41,7 @@ object Aoc2023Day12 {
                 .isNotEmpty()
             || damagedGroups.sum() > springs.count { it != '.' }
         ) {
-            return 0
+            return BigDecimal.ZERO
         }
 
         var truncatedSprings = springs
