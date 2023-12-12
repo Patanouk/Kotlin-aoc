@@ -9,7 +9,7 @@ object Aoc2023Day12 {
         return readInput("/day12/input.txt")
             .map { it.split(' ') }
             .map { Pair(it[0], it[1].split(',').map { it.toInt() }) }
-            .sumOf { getNumberPossibleArrangements(it.first, it.second) }
+            .sumOf { getNumberPossibleArrangements(it.first, it.second, mutableMapOf()) }
     }
 
     fun solveSecondStar(): Int {
@@ -17,11 +17,16 @@ object Aoc2023Day12 {
             .map { it.split(' ') }
             .map { listOf((it[0] + '?').repeat(5).dropLast(1), (it[1] + ',').repeat(5).dropLast(1)) }
             .map { Pair(it[0], it[1].split(',').map { it.toInt() }) }
-            .sumOf { getNumberPossibleArrangements(it.first, it.second) }
+            .sumOf { getNumberPossibleArrangements(it.first, it.second, mutableMapOf()) }
     }
 
-    private fun getNumberPossibleArrangements(springs: String, damagedGroups: List<Int>): Int {
-        println("Processing line $springs || $damagedGroups")
+    private fun getNumberPossibleArrangements(springs: String, damagedGroups: List<Int>, memoizationMap: MutableMap<Pair<String, List<Int>>, Int>): Int {
+//        println("$springs || $damagedGroups")
+
+        if (memoizationMap.contains(Pair(springs, damagedGroups))) {
+            return memoizationMap[Pair(springs, damagedGroups)]!!
+        }
+
         if (springs.all { it != '?' }) {
             return if (countConsecutiveDamagedSprings(springs) == damagedGroups) {
                 1
@@ -35,6 +40,7 @@ object Aoc2023Day12 {
             || currentDamagedGroupSizes
                 .filterIndexed { index, currentDamagedGroupSize -> currentDamagedGroupSize != damagedGroups[index] }
                 .isNotEmpty()
+            || damagedGroups.sum() > springs.count { it != '.' }
         ) {
             return 0
         }
@@ -42,12 +48,20 @@ object Aoc2023Day12 {
         var truncatedSprings = springs
         val truncatedDamagedGroups = damagedGroups.toMutableList()
         currentDamagedGroupSizes.forEach {
-            truncatedSprings = truncatedSprings.substring(truncatedSprings.indexOfFirst { it == '#' } + it, truncatedSprings.length)
+            truncatedSprings = truncatedSprings.substring(truncatedSprings.indexOfFirst { it == '#' } + it)
             truncatedDamagedGroups.removeFirst()
         }
 
-        return getNumberPossibleArrangements(truncatedSprings.replaceFirst('?', '.'), truncatedDamagedGroups) +
-                getNumberPossibleArrangements(truncatedSprings.replaceFirst('?', '#'), truncatedDamagedGroups)
+        truncatedSprings = truncatedSprings.substring(truncatedSprings.indexOfFirst { it != '.' })
+
+        val nonDamagedSpring = truncatedSprings.replaceFirst('?', '.')
+        val nonDamagedResult = getNumberPossibleArrangements(nonDamagedSpring, truncatedDamagedGroups, memoizationMap)
+        val damagedSpring = truncatedSprings.replaceFirst('?', '#')
+        val damagedResult = getNumberPossibleArrangements(damagedSpring, truncatedDamagedGroups, memoizationMap)
+
+        memoizationMap[Pair(springs, damagedGroups)] = nonDamagedResult + damagedResult
+
+        return damagedResult + nonDamagedResult
     }
 
     private fun countConsecutiveDamagedSprings(springs: String): List<Int> {
@@ -72,8 +86,6 @@ object Aoc2023Day12 {
 
             if (consecutiveDamagedSprings > 0 && spring == '.') {
                 groupDamagedSprings.add(consecutiveDamagedSprings)
-                consecutiveDamagedSprings = 0
-            } else if (spring == '?') {
                 consecutiveDamagedSprings = 0
             }
         }
