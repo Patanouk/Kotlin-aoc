@@ -13,7 +13,11 @@ object Aoc2023Day12 {
     }
 
     private fun getNumberPossibleArrangements(springs: String, damagedGroups: List<Int>): Int {
-        // There is an early exit we can add here, but the code is fast enough as is
+        countConsecutiveDamagedSprings(springs, stopFirstUnknown = true)
+            .filterIndexed { index, damagedGroup -> damagedGroup != damagedGroups.getOrNull(index) }
+            .firstOrNull()
+            ?.let { return 0 }
+
 
         if (springs.all { it != '?' }) {
             return if (countConsecutiveDamagedSprings(springs) == damagedGroups) {
@@ -27,23 +31,34 @@ object Aoc2023Day12 {
                 getNumberPossibleArrangements(springs.replaceFirst('?', '#'), damagedGroups)
     }
 
-    private fun countConsecutiveDamagedSprings(springs: String): List<Int> {
+    private fun countConsecutiveDamagedSprings(springs: String, stopFirstUnknown: Boolean = false): List<Int> {
         var consecutiveDamagedSprings = 0
         val groupDamagedSprings = mutableListOf<Int>()
 
-        for (spring in springs) {
+        for (index in springs.indices) {
+            val spring = springs[index]
+
+            if (stopFirstUnknown && spring == '?') {
+                return groupDamagedSprings
+            }
+
             if (spring == '#') {
                 consecutiveDamagedSprings++
+
+                if (index == springs.indices.last) {
+                    groupDamagedSprings.add(consecutiveDamagedSprings)
+                }
                 continue
             }
 
-            if (consecutiveDamagedSprings > 0) {
+            if (consecutiveDamagedSprings > 0 && spring == '.') {
                 groupDamagedSprings.add(consecutiveDamagedSprings)
+                consecutiveDamagedSprings = 0
+            } else if (spring == '?') {
                 consecutiveDamagedSprings = 0
             }
         }
 
-        if (consecutiveDamagedSprings > 0) groupDamagedSprings.add(consecutiveDamagedSprings)
         return groupDamagedSprings
     }
 
