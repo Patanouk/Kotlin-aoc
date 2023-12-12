@@ -12,13 +12,16 @@ object Aoc2023Day12 {
             .sumOf { getNumberPossibleArrangements(it.first, it.second) }
     }
 
+    fun solveSecondStar(): Int {
+        return readInput("/day12/input.txt")
+            .map { it.split(' ') }
+            .map { listOf((it[0] + '?').repeat(5).dropLast(1), (it[1] + ',').repeat(5).dropLast(1)) }
+            .map { Pair(it[0], it[1].split(',').map { it.toInt() }) }
+            .sumOf { getNumberPossibleArrangements(it.first, it.second) }
+    }
+
     private fun getNumberPossibleArrangements(springs: String, damagedGroups: List<Int>): Int {
-        countConsecutiveDamagedSprings(springs, stopFirstUnknown = true)
-            .filterIndexed { index, damagedGroup -> damagedGroup != damagedGroups.getOrNull(index) }
-            .firstOrNull()
-            ?.let { return 0 }
-
-
+        println("Processing line $springs || $damagedGroups")
         if (springs.all { it != '?' }) {
             return if (countConsecutiveDamagedSprings(springs) == damagedGroups) {
                 1
@@ -27,18 +30,34 @@ object Aoc2023Day12 {
             }
         }
 
-        return getNumberPossibleArrangements(springs.replaceFirst('?', '.'), damagedGroups) +
-                getNumberPossibleArrangements(springs.replaceFirst('?', '#'), damagedGroups)
+        val currentDamagedGroupSizes = countConsecutiveDamagedSprings(springs)
+        if (currentDamagedGroupSizes.size > damagedGroups.size
+            || currentDamagedGroupSizes
+                .filterIndexed { index, currentDamagedGroupSize -> currentDamagedGroupSize != damagedGroups[index] }
+                .isNotEmpty()
+        ) {
+            return 0
+        }
+
+        var truncatedSprings = springs
+        val truncatedDamagedGroups = damagedGroups.toMutableList()
+        currentDamagedGroupSizes.forEach {
+            truncatedSprings = truncatedSprings.substring(truncatedSprings.indexOfFirst { it == '#' } + it, truncatedSprings.length)
+            truncatedDamagedGroups.removeFirst()
+        }
+
+        return getNumberPossibleArrangements(truncatedSprings.replaceFirst('?', '.'), truncatedDamagedGroups) +
+                getNumberPossibleArrangements(truncatedSprings.replaceFirst('?', '#'), truncatedDamagedGroups)
     }
 
-    private fun countConsecutiveDamagedSprings(springs: String, stopFirstUnknown: Boolean = false): List<Int> {
+    private fun countConsecutiveDamagedSprings(springs: String): List<Int> {
         var consecutiveDamagedSprings = 0
         val groupDamagedSprings = mutableListOf<Int>()
 
         for (index in springs.indices) {
             val spring = springs[index]
 
-            if (stopFirstUnknown && spring == '?') {
+            if (spring == '?') {
                 return groupDamagedSprings
             }
 
