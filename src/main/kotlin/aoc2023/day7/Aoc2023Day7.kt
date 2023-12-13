@@ -1,4 +1,4 @@
-package AOC2023.day7
+package aoc2023.day7
 
 import readInput
 
@@ -8,7 +8,7 @@ object Aoc2023Day7 {
     private val cardOrderSecondStar = listOf('A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J').reversed()
 
     fun solveFirstStar(): Int {
-        return readInput("/AOC2023/day7/input.txt")
+        return readInput("/aoc2023/day7/input.txt")
             .map { it.split(" ") }
             .map { Hand(it[0], it[1].toInt(), cardOrderFirstStar) }
             .sorted()
@@ -18,7 +18,7 @@ object Aoc2023Day7 {
     }
 
     fun solveSecondStar(): Int {
-        val temp = readInput("/AOC2023/day7/input.txt")
+        val temp = readInput("/aoc2023/day7/input.txt")
             .map { it.split(" ") }
             .map { Hand(it[0], it[1].toInt(), cardOrderFirstStar) }
             .sortedWith(compareBy<Hand> { mapToBestHand(it).handType }.thenComparator { h1, h2 ->
@@ -28,7 +28,7 @@ object Aoc2023Day7 {
             })
             .reversed()
 
-        return readInput("/AOC2023/day7/input.txt")
+        return readInput("/aoc2023/day7/input.txt")
             .map { it.split(" ") }
             .map { Hand(it[0], it[1].toInt(), cardOrderFirstStar) }
             .sortedWith(compareBy<Hand> { mapToBestHand(it).handType }.thenComparator { h1, h2 ->

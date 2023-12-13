@@ -1,17 +1,17 @@
-package AOC2023.day13
+package aoc2023.day13
 
 import readInputRaw
 
 object Aoc2023Day13 {
 
     fun solveFirstStar(): Int {
-        return readInputRaw("/AOC2023/day13/input.txt")
+        return readInputRaw("/aoc2023/day13/input.txt")
             .split("\\n\\n".toRegex())
             .sumOf { findHorizontalReflection(it).sumOf { 100 * (it + 1) } + findHorizontalReflection(rotatePattern(it)).sumOf { it + 1 } }
     }
 
     fun solveSecondStar(): Int {
-        return readInputRaw("/AOC2023/day13/input.txt")
+        return readInputRaw("/aoc2023/day13/input.txt")
             .split("\\n\\n".toRegex())
             .sumOf { findHorizontalReflection(it, exactDifferences = 1).sumOf { 100 * (it + 1) } + findHorizontalReflection(
                 rotatePattern(it), exactDifferences = 1).sumOf { it + 1 } }

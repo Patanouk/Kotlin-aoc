@@ -1,4 +1,4 @@
-package AOC2023.day11
+package aoc2023.day11
 
 import readInput
 import java.math.BigDecimal
@@ -18,7 +18,7 @@ object Aoc2023Day11 {
     }
 
     private fun countShortestDistance(lineFactorMultiply: Int): BigDecimal {
-        val input = readInput("/AOC2023/day11/input.txt")
+        val input = readInput("/aoc2023/day11/input.txt")
             .map { it.toList() }
 
         val emptyLines = input.indices

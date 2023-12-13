@@ -1,11 +1,11 @@
-package AOC2023.day3
+package aoc2023.day3
 
 import readInput
 
 object Aoc2023Day3 {
 
     fun solveFirstStar(): Int {
-        val input = readInput("/AOC2023/day3/input.txt")
+        val input = readInput("/aoc2023/day3/input.txt")
             .map { it.toCharArray().toList() }
         var result = 0
 
@@ -54,7 +54,7 @@ object Aoc2023Day3 {
     }
 
     fun solveSecondStar(): Int {
-        val input = readInput("/AOC2023/day3/input.txt")
+        val input = readInput("/aoc2023/day3/input.txt")
             .map { it.toCharArray().toList() }
         var result = 0
 

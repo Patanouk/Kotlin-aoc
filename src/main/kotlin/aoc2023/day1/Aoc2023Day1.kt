@@ -1,11 +1,11 @@
-package AOC2023.day1
+package aoc2023.day1
 
 import readInput
 
 object Aoc2023Day1 {
 
     fun solveFirstStar(): Int {
-        val input = readInput("/AOC2023/day1/input.txt")
+        val input = readInput("/aoc2023/day1/input.txt")
         var result = 0
 
         for (line in input) {
@@ -17,7 +17,7 @@ object Aoc2023Day1 {
     }
 
     fun solveSecondStar(): Int {
-        val input = readInput("/AOC2023/day1/input.txt")
+        val input = readInput("/aoc2023/day1/input.txt")
         var result = 0
 
         for (line in input) {

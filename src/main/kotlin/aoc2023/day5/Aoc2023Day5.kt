@@ -1,11 +1,11 @@
-package AOC2023.day5
+package aoc2023.day5
 
 import readInput
 
 object Aoc2023Day5 {
 
     fun solveFirstStar(): Long {
-        val input = readInput("/AOC2023/day5/input.txt")
+        val input = readInput("/aoc2023/day5/input.txt")
 
         val seeds = input.first()
         .substringAfter("seeds: ")
@@ -48,7 +48,7 @@ object Aoc2023Day5 {
     }
 
     fun solveSecondStar(): Long {
-        val input = readInput("/AOC2023/day5/input.txt")
+        val input = readInput("/aoc2023/day5/input.txt")
 
         val seeds = input.first()
             .substringAfter("seeds: ")
