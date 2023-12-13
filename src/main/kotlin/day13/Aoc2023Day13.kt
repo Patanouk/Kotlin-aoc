@@ -10,6 +10,12 @@ object Aoc2023Day13 {
             .sumOf { findHorizontalReflection(it).sumOf { 100 * (it + 1) } + findHorizontalReflection(rotatePattern(it)).sumOf { it + 1 } }
     }
 
+    fun solveSecondStar(): Int {
+        return readInputRaw("/day13/input.txt")
+            .split("\\n\\n".toRegex())
+            .sumOf { findHorizontalReflection(it, exactDifferences = 1).sumOf { 100 * (it + 1) } + findHorizontalReflection(rotatePattern(it), exactDifferences = 1).sumOf { it + 1 } }
+    }
+
     private fun rotatePattern(pattern: String): String {
         val patternList = pattern.lines()
             .map { it.toList() }
@@ -24,25 +30,33 @@ object Aoc2023Day13 {
             .joinToString("\n")
     }
 
-    private fun findHorizontalReflection(pattern: String): List<Int> {
+    private fun findHorizontalReflection(pattern: String, exactDifferences: Int = 0): List<Int> {
         val lines = pattern.lines()
         val horizontalReflectionIndex = mutableListOf<Int>()
-
         for (i in 0..lines.size - 2) {
             var j = 0
+            var currentDifferences = 0
+
             while (true) {
                 if (i - j < 0 || i + j + 1 > lines.indices.last) {
-                    horizontalReflectionIndex.add(i)
+                    if (currentDifferences == exactDifferences) {
+                        horizontalReflectionIndex.add(i)
+                    }
                     break
                 }
 
                 if (lines[i - j] != lines[i + j + 1]) {
+                    currentDifferences += lines[i - j].filterIndexed { index, c -> lines[i + j + 1][index] != c }.count()
+                }
+
+                if (currentDifferences > exactDifferences) {
                     break
                 }
 
                 j++
             }
         }
+
         return horizontalReflectionIndex
     }
 }
