@@ -1,4 +1,4 @@
-package day12
+package AOC2023.day12
 
 import readInput
 import java.math.BigDecimal
@@ -7,14 +7,14 @@ object Aoc2023Day12 {
 
 
     fun solveFirstStar(): BigDecimal {
-        return readInput("/day12/input.txt")
+        return readInput("/AOC2023/day12/input.txt")
             .map { it.split(' ') }
             .map { Pair(it[0], it[1].split(',').map { it.toInt() }) }
             .sumOf { getNumberPossibleArrangements(it.first, it.second, mutableMapOf()) }
     }
 
     fun solveSecondStar(): BigDecimal {
-        return readInput("/day12/input.txt")
+        return readInput("/AOC2023/day12/input.txt")
             .map { it.split(' ') }
             .map { listOf((it[0] + '?').repeat(5).dropLast(1), (it[1] + ',').repeat(5).dropLast(1)) }
             .map { Pair(it[0], it[1].split(',').map { it.toInt() }) }

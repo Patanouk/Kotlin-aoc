@@ -1,4 +1,4 @@
-package day8
+package AOC2023.day8
 
 import readInput
 import java.lang.IllegalArgumentException
@@ -7,7 +7,7 @@ object Aoc2023Day8 {
 
 
     fun solveFirstStar(): Int {
-        val input = readInput("/day8/input.txt")
+        val input = readInput("/AOC2023/day8/input.txt")
         val directions = input.first()
 
         val nodes = input.subList(2, input.size)
@@ -25,7 +25,7 @@ object Aoc2023Day8 {
     }
 
     fun solveSecondStar(): Long {
-        val input = readInput("/day8/input.txt")
+        val input = readInput("/AOC2023/day8/input.txt")
         val directions = input.first()
 
         val nodes = input.subList(2, input.size)

@@ -1,4 +1,4 @@
-import day13.Aoc2023Day13
+import AOC2023.day13.Aoc2023Day13
 import kotlin.time.measureTime
 
 fun main() {

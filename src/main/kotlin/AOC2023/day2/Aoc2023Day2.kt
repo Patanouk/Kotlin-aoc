@@ -1,4 +1,4 @@
-package day2
+package AOC2023.day2
 
 import readInput
 
@@ -11,7 +11,7 @@ object Aoc2023Day2 {
     )
 
     fun solveFirstStar(): Int {
-        val input = readInput("/day2/input.txt")
+        val input = readInput("/AOC2023/day2/input.txt")
 
         return mapInputToListOfDraw(input)
             .mapIndexed { i, draws -> (i + 1) to draws }
@@ -23,7 +23,7 @@ object Aoc2023Day2 {
     }
 
     fun solveSecondStar(): Int {
-        val input = readInput("/day2/input.txt")
+        val input = readInput("/AOC2023/day2/input.txt")
 
         return mapInputToListOfDraw(input)
             .map { draws -> draws.groupBy(Draw::color, Draw::number) }

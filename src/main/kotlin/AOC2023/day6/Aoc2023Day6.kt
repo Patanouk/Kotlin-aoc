@@ -1,4 +1,4 @@
-package day6
+package AOC2023.day6
 
 import readInput
 import kotlin.math.ceil
@@ -8,7 +8,7 @@ import kotlin.math.sqrt
 object Aoc2023Day6 {
 
     fun solveFirstStar(): Int {
-        val input = readInput("/day6/input.txt")
+        val input = readInput("/AOC2023/day6/input.txt")
 
         val times = input.first()
             .substringAfter("Time: ")
@@ -29,7 +29,7 @@ object Aoc2023Day6 {
     }
 
     fun solveSecondStar(): Int {
-        val input = readInput("/day6/input.txt")
+        val input = readInput("/AOC2023/day6/input.txt")
 
         val time = input.first()
             .substringAfter("Time: ")

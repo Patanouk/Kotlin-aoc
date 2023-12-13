@@ -1,4 +1,4 @@
-package day4
+package AOC2023.day4
 
 import readInput
 import java.util.*
@@ -7,7 +7,7 @@ import kotlin.math.pow
 object Aoc2023Day4 {
 
     fun solveFirstStar(): Int {
-        return readInput("/day4/input.txt")
+        return readInput("/AOC2023/day4/input.txt")
             .asSequence()
             .map { it.substringAfter(":") }
             .map { it.trim().split("|") }
@@ -20,7 +20,7 @@ object Aoc2023Day4 {
     }
 
     fun solveSecondStar(): Int {
-        val matchingNumbersPerCard = readInput("/day4/input.txt")
+        val matchingNumbersPerCard = readInput("/AOC2023/day4/input.txt")
             .asSequence()
             .map { it.substringAfter(":") }
             .map { it.trim().split("|") }
