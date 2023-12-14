@@ -1,10 +1,10 @@
-import aoc2015.day3.Aoc2015Day3
+import aoc2023.day14.Aoc2023Day14
 import kotlin.time.measureTime
 
 fun main() {
 
     val time = measureTime {
-        println(Aoc2015Day3.solveSecondStar())
+        println(Aoc2023Day14.solveFirstStar())
     }
 
     println("Took $time to run")
