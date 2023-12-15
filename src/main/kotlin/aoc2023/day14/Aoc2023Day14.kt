@@ -38,15 +38,40 @@ object Aoc2023Day14 {
             .map { it.toCharArray() }
             .toTypedArray()
 
-        for (i in 0..1000000000) {
-            println(i)
-            input = rotateNorth(input)
-            input = rotateWest(input)
-            input = rotateSouth(input)
-            input = rotateEast(input)
+        val seenPosition = mutableMapOf<String, Int>()
+        seenPosition[input.joinToString("") { it.joinToString("") }] = 0
+
+        var cycleLength = 0
+        var remainingCycle = 1000000000
+        for (j in 1..1000000000) {
+            input = rotateFullCycle(input)
+            val inputAsString = input.joinToString("") { it.joinToString("") }
+
+            if (seenPosition.contains(inputAsString)) {
+                cycleLength = j - seenPosition[inputAsString]!!
+                remainingCycle -= j
+                break
+            }
+
+            seenPosition[inputAsString] = j
+        }
+
+        remainingCycle %= cycleLength
+
+        repeat(remainingCycle) {
+            input = rotateFullCycle(input)
         }
 
         return countBeamLoad(input.toList())
+    }
+
+    private fun rotateFullCycle(input: Array<CharArray>): Array<CharArray> {
+        var result = rotateNorth(input)
+        result = rotateWest(result)
+        result = rotateSouth(result)
+        result = rotateEast(result)
+
+        return result
     }
 
     private fun rotateNorth(input: Array<CharArray>): Array<CharArray> {
