@@ -22,6 +22,20 @@ object Aoc2023Day17 {
         )
     }
 
+    fun solveSecondStar(): Int {
+        val startingPosition = Coordinates(0, 0)
+        val initialPossibleState = CoordinateWithDirectionAndDistance(startingPosition, Direction.right, 1)
+        val initialPossibleState2 = CoordinateWithDirectionAndDistance(startingPosition, Direction.down, 1)
+
+        return shortestPath(
+            mutableSetOf(initialPossibleState, initialPossibleState2),
+            mutableMapOf(initialPossibleState to 0, initialPossibleState2 to 0),
+            mutableSetOf(),
+            4,
+            10
+        )
+    }
+
     private fun shortestPath(
         nodesToVisit: MutableSet<CoordinateWithDirectionAndDistance>,
         pathCosts: MutableMap<CoordinateWithDirectionAndDistance, Int>,
@@ -45,6 +59,7 @@ object Aoc2023Day17 {
                 }
 
             visitedNodes.add(currentPos)
+            println(visitedNodes.size)
             nodesToVisit.remove(currentPos)
         }
     }
