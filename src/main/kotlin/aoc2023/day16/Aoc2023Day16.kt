@@ -11,6 +11,15 @@ object Aoc2023Day16 {
         return countEnergizedCoordinates(Coordinates(0,0), Direction.Right)
     }
 
+    fun solveSecondStar(): Int {
+        val maxRight = input.indices.maxOf { countEnergizedCoordinates(Coordinates(it, 0), Direction.Right) }
+        val maxLeft = input.indices.maxOf { countEnergizedCoordinates(Coordinates(it, input[0].indices.last), Direction.Left) }
+        val maxDown = input[0].indices.maxOf { countEnergizedCoordinates(Coordinates(0, it), Direction.Down) }
+        val maxUp = input[0].indices.maxOf { countEnergizedCoordinates(Coordinates(input.indices.last, it), Direction.Up) }
+
+        return listOf(maxRight, maxLeft, maxDown, maxUp).max()
+    }
+
     private fun countEnergizedCoordinates(startingPos: Coordinates, direction: Direction): Int {
         return fillEnergizedCoordinates(startingPos, direction, mutableSetOf())
             .map { it.first }
