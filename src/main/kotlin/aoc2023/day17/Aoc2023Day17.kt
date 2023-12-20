@@ -1,6 +1,7 @@
 package aoc2023.day17
 
 import readInput
+import java.util.*
 import kotlin.math.min
 
 object Aoc2023Day17 {
@@ -13,8 +14,11 @@ object Aoc2023Day17 {
         val initialPossibleState = CoordinateWithDirectionAndDistance(startingPosition, Direction.right, 1)
         val initialPossibleState2 = CoordinateWithDirectionAndDistance(startingPosition, Direction.down, 1)
 
+        val costToInitialStates = TreeMap<Int, MutableSet<CoordinateWithDirectionAndDistance>>()
+        costToInitialStates[0] = mutableSetOf(initialPossibleState, initialPossibleState2)
+
         return shortestPath(
-            mutableSetOf(initialPossibleState, initialPossibleState2),
+            costToInitialStates,
             mutableMapOf(initialPossibleState to 0, initialPossibleState2 to 0),
             mutableSetOf(),
             0,
@@ -27,8 +31,12 @@ object Aoc2023Day17 {
         val initialPossibleState = CoordinateWithDirectionAndDistance(startingPosition, Direction.right, 1)
         val initialPossibleState2 = CoordinateWithDirectionAndDistance(startingPosition, Direction.down, 1)
 
+        val costToInitialStates = TreeMap<Int, MutableSet<CoordinateWithDirectionAndDistance>>()
+        costToInitialStates[0] = mutableSetOf(initialPossibleState, initialPossibleState2)
+
+
         return shortestPath(
-            mutableSetOf(initialPossibleState, initialPossibleState2),
+            costToInitialStates,
             mutableMapOf(initialPossibleState to 0, initialPossibleState2 to 0),
             mutableSetOf(),
             4,
@@ -37,30 +45,37 @@ object Aoc2023Day17 {
     }
 
     private fun shortestPath(
-        nodesToVisit: MutableSet<CoordinateWithDirectionAndDistance>,
+        nodesToVisit: TreeMap<Int, MutableSet<CoordinateWithDirectionAndDistance>>,
         pathCosts: MutableMap<CoordinateWithDirectionAndDistance, Int>,
         visitedNodes: MutableSet<CoordinateWithDirectionAndDistance>,
         minDistanceDirection: Int,
         maxDistanceDirection: Int,
     ): Int {
         while (true) {
-            val currentPos = nodesToVisit.sortedBy { pathCosts[it] }.first()
-
-            if (currentPos.coordinates == Coordinates(input.indices.last, input[0].indices.last) && currentPos.distance >= minDistanceDirection) {
-                return pathCosts[currentPos]!!
-            }
-
-            val neighbours = getNextNodes(currentPos, minDistanceDirection, maxDistanceDirection)
-
-            neighbours.filter { !visitedNodes.contains(it) }
-                .forEach {
-                    pathCosts[it] = min(pathCosts[currentPos]!! + input[it.coordinates.x][it.coordinates.y], pathCosts.getOrDefault(it, Int.MAX_VALUE))
-                    nodesToVisit.add(it)
+            val minCost = nodesToVisit.firstKey()
+            val nodes = nodesToVisit[minCost]!!.toList()
+            for (currentPos in nodes) {
+                if (currentPos.coordinates == Coordinates(input.indices.last, input[0].indices.last) && currentPos.distance >= minDistanceDirection) {
+                    return pathCosts[currentPos]!!
                 }
 
-            visitedNodes.add(currentPos)
-            println(visitedNodes.size)
-            nodesToVisit.remove(currentPos)
+                val neighbours = getNextNodes(currentPos, minDistanceDirection, maxDistanceDirection)
+
+                neighbours.filter { !visitedNodes.contains(it) }
+                    .forEach {
+                        pathCosts[it] = min(pathCosts[currentPos]!! + input[it.coordinates.x][it.coordinates.y], pathCosts.getOrDefault(it, Int.MAX_VALUE))
+
+                        if (!nodesToVisit.contains(pathCosts[it])) {
+                            nodesToVisit[pathCosts[it]!!] = mutableSetOf()
+                        }
+                        nodesToVisit[pathCosts[it]!!]!!.add(it)
+                    }
+
+                visitedNodes.add(currentPos)
+            }
+
+            println(nodesToVisit.size)
+            nodesToVisit.remove(minCost)
         }
     }
 
