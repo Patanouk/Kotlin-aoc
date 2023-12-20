@@ -13,22 +13,30 @@ object Aoc2023Day17 {
         val initialPossibleState = CoordinateWithDirectionAndDistance(startingPosition, Direction.right, 1)
         val initialPossibleState2 = CoordinateWithDirectionAndDistance(startingPosition, Direction.down, 1)
 
-        return shortestPath(mutableSetOf(initialPossibleState, initialPossibleState2), mutableMapOf(initialPossibleState to 0, initialPossibleState2 to 0), mutableSetOf())
+        return shortestPath(
+            mutableSetOf(initialPossibleState, initialPossibleState2),
+            mutableMapOf(initialPossibleState to 0, initialPossibleState2 to 0),
+            mutableSetOf(),
+            0,
+            3
+        )
     }
 
     private fun shortestPath(
         nodesToVisit: MutableSet<CoordinateWithDirectionAndDistance>,
         pathCosts: MutableMap<CoordinateWithDirectionAndDistance, Int>,
         visitedNodes: MutableSet<CoordinateWithDirectionAndDistance>,
+        minDistanceDirection: Int,
+        maxDistanceDirection: Int,
     ): Int {
         while (true) {
             val currentPos = nodesToVisit.sortedBy { pathCosts[it] }.first()
 
-            if (currentPos.coordinates == Coordinates(input.indices.last, input[0].indices.last)) {
+            if (currentPos.coordinates == Coordinates(input.indices.last, input[0].indices.last) && currentPos.distance >= minDistanceDirection) {
                 return pathCosts[currentPos]!!
             }
 
-            val neighbours = getNextNodes(currentPos)
+            val neighbours = getNextNodes(currentPos, minDistanceDirection, maxDistanceDirection)
 
             neighbours.filter { !visitedNodes.contains(it) }
                 .forEach {
@@ -41,24 +49,30 @@ object Aoc2023Day17 {
         }
     }
 
-    private fun getNextNodes(c: CoordinateWithDirectionAndDistance): Set<CoordinateWithDirectionAndDistance> {
+    private fun getNextNodes(
+        c: CoordinateWithDirectionAndDistance,
+        minDistanceDirection: Int,
+        maxDistanceDirection: Int
+    ): Set<CoordinateWithDirectionAndDistance> {
         val result = mutableSetOf<CoordinateWithDirectionAndDistance>()
         val currentPos = c.coordinates
 
-        when (c.direction) {
-            Direction.up,
-            Direction.down -> {
-                result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x, currentPos.y - 1), Direction.left, 1))
-                result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x, currentPos.y + 1), Direction.right, 1))
-            }
-            Direction.left,
-            Direction.right -> {
-                result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x - 1, currentPos.y), Direction.up, 1))
-                result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x + 1, currentPos.y), Direction.down, 1))
+        if (c.distance >= minDistanceDirection) {
+            when (c.direction) {
+                Direction.up,
+                Direction.down -> {
+                    result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x, currentPos.y - 1), Direction.left, 1))
+                    result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x, currentPos.y + 1), Direction.right, 1))
+                }
+                Direction.left,
+                Direction.right -> {
+                    result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x - 1, currentPos.y), Direction.up, 1))
+                    result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x + 1, currentPos.y), Direction.down, 1))
+                }
             }
         }
 
-        if (c.distance < 3) {
+        if (c.distance < maxDistanceDirection) {
             when (c.direction) {
                 Direction.up -> result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x - 1, currentPos.y), Direction.up, c.distance + 1))
                 Direction.down -> result.add(CoordinateWithDirectionAndDistance(Coordinates(currentPos.x + 1, currentPos.y), Direction.down, c.distance + 1))
