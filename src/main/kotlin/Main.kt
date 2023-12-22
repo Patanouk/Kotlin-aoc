@@ -4,7 +4,7 @@ import kotlin.time.measureTime
 fun main() {
 
     val time = measureTime {
-        println(Aoc2023Day19.solveFirstStar())
+        println(Aoc2023Day19.solveSecondStar())
     }
 
     println("Took $time to run")
