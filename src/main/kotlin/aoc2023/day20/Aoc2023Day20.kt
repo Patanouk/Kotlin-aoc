@@ -15,18 +15,27 @@ object Aoc2023Day20 {
         .let { BroadCastModule(it) }
 
 
-    private val modules = input.filter { !it.contains("broadcaster") }
-        .map { it.split(" -> ") }
-        .associate { Pair(it[0].substring(1), createModule(it[0][0], it[1].split(", "))) }
-        .toMutableMap()
-
-    private val inputs = getInputMap()
+    private var modules = parseModules()
+    private var inputs = getInputMap()
 
     init {
         modules["broadcaster"] = broadcasterModule
         modules.filter { it.value is ConjunctionModule }
             .forEach { (it.value as ConjunctionModule).setInputModules(inputs[it.key]!!) }
     }
+
+    private fun resetInput() {
+        modules = parseModules()
+        inputs = getInputMap()
+        modules["broadcaster"] = broadcasterModule
+        modules.filter { it.value is ConjunctionModule }
+            .forEach { (it.value as ConjunctionModule).setInputModules(inputs[it.key]!!) }
+    }
+
+    private fun parseModules() = input.filter { !it.contains("broadcaster") }
+        .map { it.split(" -> ") }
+        .associate { Pair(it[0].substring(1), createModule(it[0][0], it[1].split(", "))) }
+        .toMutableMap()
 
     fun solveFirstStar(): Int {
 
@@ -60,6 +69,8 @@ object Aoc2023Day20 {
 
         for (nextLayerInput in nextLayerInputs) {
             var buttonPress = 0
+            resetInput()
+
             while (true) {
                 val found = pressButtonAndSearchInputsForHighPulse(nextLayerInput)
                 println("$nextLayerInput : $buttonPress")
