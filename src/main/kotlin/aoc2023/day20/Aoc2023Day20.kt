@@ -5,26 +5,29 @@ import java.util.LinkedList
 
 object Aoc2023Day20 {
 
-    fun solveFirstStar(): Int {
-        val input = readInput("/aoc2023/day20/input.txt")
-        val broadcasterModule = input
-            .first { it.contains("broadcaster") }
-            .substringAfter('>')
-            .trim()
-            .split(", ")
-            .let { BroadCastModule(it) }
+    private val input = readInput("/aoc2023/day20/input.txt")
+    private val broadcasterModule = input
+        .first { it.contains("broadcaster") }
+        .substringAfter('>')
+        .trim()
+        .split(", ")
+        .let { BroadCastModule(it) }
 
 
-        val modules = input.filter { !it.contains("broadcaster") }
-            .map { it.split(" -> ") }
-            .associate { Pair(it[0].substring(1), createModule(it[0][0], it[1].split(", "))) }
-            .toMutableMap()
+    private val modules = input.filter { !it.contains("broadcaster") }
+        .map { it.split(" -> ") }
+        .associate { Pair(it[0].substring(1), createModule(it[0][0], it[1].split(", "))) }
+        .toMutableMap()
 
+    private val inputs = getInputMap()
+
+    init {
         modules["broadcaster"] = broadcasterModule
-
-        val inputs = getInputMap(modules)
         modules.filter { it.value is ConjunctionModule }
             .forEach { (it.value as ConjunctionModule).setInputModules(inputs[it.key]!!) }
+    }
+
+    fun solveFirstStar(): Int {
 
         var lowPulseCount = 0
         var highPulseCount = 0
@@ -32,7 +35,7 @@ object Aoc2023Day20 {
 //            println("-----------------------------------")
 //            println("Cycle $i")
 
-            val pulseCount = pressButton(modules)
+            val pulseCount = pressButton()
             lowPulseCount += pulseCount.first
             highPulseCount += pulseCount.second
         }
@@ -40,7 +43,7 @@ object Aoc2023Day20 {
         return lowPulseCount * highPulseCount
     }
 
-    private fun pressButton(modules: MutableMap<String, Module>): Pair<Int, Int> {
+    private fun pressButton(): Pair<Int, Int> {
         val broadcasts = LinkedList<Broadcast>()
         broadcasts.add(Broadcast("button", "broadcaster", Pulse.Low))
 
@@ -64,7 +67,7 @@ object Aoc2023Day20 {
         return Pair(lowPulseCount, highPulseCount)
     }
 
-    private fun getInputMap(modules: Map<String, Module>): Map<String, MutableSet<String>> {
+    private fun getInputMap(): Map<String, MutableSet<String>> {
         val result = mutableMapOf<String, MutableSet<String>>()
 
         for (entry in modules) {
@@ -90,7 +93,7 @@ object Aoc2023Day20 {
         abstract fun broadcast(input: String, pulse: Pulse): Pulse?
     }
 
-    private class NullModule() : Module(listOf()) {
+    private class NullModule : Module(listOf()) {
         override fun broadcast(input: String, pulse: Pulse): Pulse? {
             return null
         }
