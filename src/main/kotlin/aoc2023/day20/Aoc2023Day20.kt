@@ -1,5 +1,6 @@
 package aoc2023.day20
 
+import findLCM
 import readInput
 import java.util.LinkedList
 
@@ -43,6 +44,57 @@ object Aoc2023Day20 {
         return lowPulseCount * highPulseCount
     }
 
+    fun solveSecondStar(): Long {
+        val rxInput = inputs["rx"]!!
+        if (rxInput.size != 1 || modules[rxInput.first()]!! !is ConjunctionModule) {
+            error("Cannot solve")
+        }
+
+        val rxInputName = rxInput.first()
+        val nextLayerInputs = inputs[rxInputName]!!
+        if (nextLayerInputs.map { modules[it] }.any { it !is ConjunctionModule }) {
+            error("Cannot solve")
+        }
+
+        val inputToButtonPressCount = mutableMapOf<String, Int>()
+
+        for (nextLayerInput in nextLayerInputs) {
+            var buttonPress = 0
+            while (true) {
+                val found = pressButtonAndSearchInputsForHighPulse(nextLayerInput)
+                println("$nextLayerInput : $buttonPress")
+                buttonPress += 1
+
+                if (found) {
+                    inputToButtonPressCount[nextLayerInput] = buttonPress
+                    break
+                }
+            }
+        }
+
+        return findLCM(inputToButtonPressCount.values.map { it.toLong() })
+    }
+
+    private fun pressButtonAndSearchInputsForHighPulse(input: String): Boolean {
+        val broadcasts = LinkedList<Broadcast>()
+        broadcasts.add(Broadcast("button", "broadcaster", Pulse.Low))
+
+        while (!broadcasts.isEmpty()) {
+            val broadcast = broadcasts.pop()
+            val destinationModule = modules.getOrPut(broadcast.destination) { NullModule() }
+
+            if (input == broadcast.input && broadcast.pulse == Pulse.High) {
+                return true
+            }
+
+            val nextPulse = destinationModule.broadcast(broadcast.input, broadcast.pulse) ?: continue
+            destinationModule.destinationModules
+                .forEach { broadcasts.add(Broadcast(broadcast.destination, it, nextPulse)) }
+        }
+
+        return false
+    }
+
     private fun pressButton(): Pair<Int, Int> {
         val broadcasts = LinkedList<Broadcast>()
         broadcasts.add(Broadcast("button", "broadcaster", Pulse.Low))
@@ -54,7 +106,7 @@ object Aoc2023Day20 {
             val destinationModule = modules.getOrPut(broadcast.destination) { NullModule() }
 //            println("${broadcast.input} -${broadcast.pulse}-> ${broadcast.destination}")
 
-            when(broadcast.pulse) {
+            when (broadcast.pulse) {
                 Pulse.Low -> lowPulseCount++
                 Pulse.High -> highPulseCount++
             }
